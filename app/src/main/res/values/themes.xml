@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SakuraWord" parent="android:Theme.Material.Light.NoActionBar" />
+
+
+    <style name="Theme.NoEdgeToEdge" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 不透明状态栏 -->
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- 不透明导航栏 -->
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <!-- 关键：禁用 Edge-to-Edge -->
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+</resources>

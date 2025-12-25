@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- 序号 -->
+        <TextView
+            android:id="@+id/numberText"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="18sp"
+            android:textColor="#2C3E50"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <!-- 图标 -->
+        <TextView
+            android:id="@+id/iconText"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="🌸"
+            android:textSize="32sp"
+            android:gravity="center"
+            android:layout_marginStart="8dp"/>
+
+        <!-- 文字内容 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/kanjiText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="花見（はなみ）"
+                android:textSize="18sp"
+                android:textColor="#2C3E50"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/meaningText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flower Viewing"
+                android:textSize="15sp"
+                android:textColor="#7A8B9C"/>
+        </LinearLayout>
+
+        <!-- 发音按钮 -->
+        <ImageView
+            android:id="@+id/soundButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_volume"
+            android:padding="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginStart="8dp"
+            app:tint="#FF9FBE" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- N级颜色 - 从浅到深的粉色系 -->
+    <color name="level_n5">#F5C6DB</color>
+    <color name="level_n4">#F5ADCD</color>
+    <color name="level_n3">#FF8FB8</color>
+    <color name="level_n2">#F5ADCD</color>
+    <color name="level_n1">#D88BA8</color>
+
+    <!-- 其他颜色 -->
+    <color name="primary_pink">#FF6B9D</color>
+    <color name="background_pink">#FFE1EC</color>
+    <color name="text_dark">#2C3E50</color>
+    <color name="text_gray">#7A8B9C</color>
+
+</resources>
