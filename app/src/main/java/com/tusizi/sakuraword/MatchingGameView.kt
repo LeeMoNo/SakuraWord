@@ -1,8 +1,8 @@
-package com.example.sakuragame.ui.game
+package com.tusizi.sakuraword
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,16 +18,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tusizi.sakuraword.data.Words
@@ -53,51 +50,7 @@ enum class PetalType {
     QUESTION, ANSWER
 }
 
-// 自定义花瓣形状
-class PetalShape : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        val path = Path().apply {
-            val width = size.width
-            val height = size.height
-
-            // 创建有机的花瓣形状（类似椭圆但不规则）
-            moveTo(width * 0.5f, 0f)
-
-            // 使用三次贝塞尔曲线创建花瓣形状
-            cubicTo(
-                width * 0.8f, height * 0.1f,
-                width * 0.95f, height * 0.4f,
-                width * 0.9f, height * 0.7f
-            )
-
-            cubicTo(
-                width * 0.85f, height * 0.9f,
-                width * 0.65f, height,
-                width * 0.5f, height
-            )
-
-            cubicTo(
-                width * 0.35f, height,
-                width * 0.15f, height * 0.9f,
-                width * 0.1f, height * 0.7f
-            )
-
-            cubicTo(
-                width * 0.05f, height * 0.4f,
-                width * 0.2f, height * 0.1f,
-                width * 0.5f, 0f
-            )
-
-            close()
-        }
-        return Outline.Generic(path)
-    }
-}
-
+//配对游戏
 @Composable
 fun MatchingGameView(
     words: List<Words>,
@@ -334,15 +287,8 @@ fun PetalItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    // 根据内容长度计算花瓣大小
+    // 1. 字体大小逻辑保留（或者你可以根据需求调整）
     val contentLength = petal.content.length
-    val baseSize = when {
-        contentLength <= 6 -> 110.dp
-        contentLength <= 10 -> 130.dp
-        contentLength <= 15 -> 150.dp
-        else -> 170.dp
-    }
-
     val fontSize = when {
         contentLength <= 6 -> 16.sp
         contentLength <= 10 -> 14.sp
@@ -350,7 +296,11 @@ fun PetalItem(
         else -> 11.sp
     }
 
-    // 匹配动画
+    // 2. 设定一个固定的宽度，或者最小宽度，保持花瓣的形态
+    // 高度则完全由内容撑开
+    val petalWidth = 100.dp
+
+    // 动画逻辑保持不变
     val scale by animateFloatAsState(
         targetValue = when {
             petal.matched -> 1.5f
@@ -367,15 +317,10 @@ fun PetalItem(
         label = "alpha"
     )
 
-    // 抖动动画
     val shakeOffset by animateFloatAsState(
         targetValue = if (petal.shaking) 5f else 0f,
         animationSpec = if (petal.shaking) {
-            repeatable(
-                iterations = 4,
-                animation = tween(80),
-                repeatMode = RepeatMode.Reverse
-            )
+            repeatable(4, tween(80), RepeatMode.Reverse)
         } else {
             tween(0)
         },
@@ -388,46 +333,60 @@ fun PetalItem(
                 x = (petal.x / 100f * 300).dp + shakeOffset.dp,
                 y = (petal.y / 100f * 550).dp
             )
-            .size(baseSize)
+            .width(petalWidth) // 设定宽度，高度不设，默认为 wrapContent
+            // .heightIn(min = 100.dp) // 可选：设置最小高度以防止文字太少时花瓣太扁
             .scale(scale)
             .alpha(alpha)
             .rotate(petal.rotation)
             .clickable(enabled = !petal.matched) { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        // 花瓣形状背景
-        Box(
+        // 3. 背景图片：关键修改
+        Image(
+            painter = painterResource(id = R.mipmap.ic_word_bg),
+            contentDescription = null,
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize() // 关键点：让图片大小跟随父 Box（即跟随 Text 的大小）
                 .shadow(
                     elevation = if (isSelected) 12.dp else 4.dp,
-                    shape = PetalShape(),
                     clip = false
-                )
-                .background(
-                    color = when {
-                        isSelected -> Color(0xFFFB7185)
-                        petal.type == PetalType.QUESTION -> Color.White
-                        else -> Color(0xFFFCE7F3)
-                    },
-                    shape = PetalShape()
-                )
-                .border(
-                    width = 2.dp,
-                    color = if (isSelected) Color(0xFFFB7185) else Color(0xFFFDA4AF),
-                    shape = PetalShape()
                 ),
-            contentAlignment = Alignment.Center
+            contentScale = ContentScale.FillBounds, // 图片拉伸填满 Box
+            colorFilter = when {
+                isSelected -> ColorFilter.tint(Color(0xFFFB7185))
+                petal.type == PetalType.QUESTION -> ColorFilter.tint(Color.White)
+                else -> ColorFilter.tint(Color(0xFFFCE7F3))
+            }
+        )
+
+        // 4. 文字内容：决定了 Box 的高度
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            // 强制子元素之间产生负间距（重叠）
+            verticalArrangement = Arrangement.spacedBy((-5).dp),
+            // 增加 vertical padding，给背景图留出上下边距
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 13.dp)
         ) {
-            Text(
-                text = petal.content,
-                fontSize = fontSize,
-                fontWeight = FontWeight.Bold,
-                color = if (isSelected) Color.White else Color(0xFF1e293b),
-                textAlign = TextAlign.Center,
-                lineHeight = (fontSize.value + 2).sp,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-            )
+            petal.content.forEach { char ->
+                val isSmallKana = isSmallJapaneseCharacter(char)
+                Text(
+                    text = char.toString(),
+                    fontSize = if (isSmallKana) fontSize * 0.7f else fontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isSelected) Color.White else Color(0xFF1e293b),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        // 1. 彻底移除所有多余 padding
+                        .padding(vertical = 0.dp)
+                        .graphicsLayer {
+                            // 2. 小假名处理：向右上偏移
+                            if (isSmallKana) {
+                                translationX = size.width * 0.2f
+                                translationY = -size.height * 0.15f
+                            }
+                        }
+                )
+            }
         }
     }
 }
@@ -568,12 +527,12 @@ private fun createNewGame(words: List<Words>): List<Petal> {
                 shaking = false
             )
         )
-        // 答案花瓣（意思）
+        // 答案花瓣（假名）
         newPetals.add(
             Petal(
                 id = "${word.id}-a",
                 wordId = word.id,
-                content = word.meaning,
+                content = word.kana,
                 type = PetalType.ANSWER,
                 x = 0f,
                 y = 0f,
@@ -608,3 +567,22 @@ private fun createNewGame(words: List<Words>): List<Petal> {
     }
 }
 
+// 辅助函数：判断是否为日文小假名
+private fun isSmallJapaneseCharacter(char: Char): Boolean {
+    return when (char) {
+        // 平假名小字
+        'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ',  // あいうえお 小写
+        'ゃ', 'ゅ', 'ょ',              // やゆよ 小写
+        'ゎ',                          // わ 小写
+        'っ',                          // 促音
+            // 片假名小字
+        'ァ', 'ィ', 'ゥ', 'ェ', 'ォ',  // アイウエオ 小写
+        'ヵ', 'ヶ',                    // カケ 小写
+        'ャ', 'ュ', 'ョ',              // ヤユヨ 小写
+        'ヮ',                          // ワ 小写
+        'ッ',                          // 促音
+        'ヴ'                           // ヴ
+            -> true
+        else -> false
+    }
+}

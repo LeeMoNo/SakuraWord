@@ -13,10 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.sakuragame.ui.game.MatchingGameView
 import com.tusizi.sakuraword.data.Words
 import com.tusizi.sakuraword.ui.theme.SakuraWordTheme
 
+/**
+ * https://dribbble.com/shots/26392061-Sakura   bg
+ * https://gemini.google.com/share/27d89fd9d7c6  聊天记录
+ */
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,22 +40,21 @@ class MainActivity : ComponentActivity() {
                     Text( text = "Listening Game" , modifier = Modifier.padding(innerPadding).clickable(
                         onClick = {}
                     ))
-                    // 使用组件
-//                    ListeningGameView(
-//                        words = listOf(
-//                            Words("1", "桜", "さくら", "cherry blossom"),
-//                            Words("2", "花", "はな", "flower"),
-//                        ),
-//                        onBack = { /* 返回操作 */ }
-//                    )
 
                     val sampleWords = listOf(
                         Words("1", "桜", "さくら", "cherry blossom"),
                         Words("2", "花", "はな", "flower"),
                         Words("3", "春", "はる", "spring"),
                         Words("4", "月", "つき", "moon"),
+                        Words("7", "勉強", "べんきょう", "Study"),
                         Words("5", "風", "かぜ", "wind"),
                         Words("6", "雪", "ゆき", "snow")
+                    )
+
+                    // 使用组件
+                    ListeningGameView(
+                        words = sampleWords,
+                        onBack = { /* 返回操作 */ }
                     )
 
                     MatchingGameView(
