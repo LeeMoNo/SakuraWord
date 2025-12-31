@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50音タイピング</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #fef2f2 0%, #fce7f3 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .back-btn {
+            padding: 0.5rem;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .back-btn svg {
+            width: 24px;
+            height: 24px;
+            color: #475569;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .header-title h1 {
+            font-weight: bold;
+            font-size: 1.125rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-title svg {
+            width: 18px;
+            height: 18px;
+            color: #ec4899;
+        }
+
+        .combo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #fef3c7;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: #d97706;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .combo-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Mode Tabs */
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            border: 1px solid;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #ec4899;
+            color: white;
+            border-color: #ec4899;
+            box-shadow: 0 2px 4px rgba(236, 72, 153, 0.3);
+        }
+
+        .tab:not(.active) {
+            background: white;
+            color: #64748b;
+            border-color: #e2e8f0;
+        }
+
+        .tab:not(.active):hover {
+            background: #f8fafc;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .question-card {
+            width: 100%;
+            max-width: 28rem;
+            background: white;
+            border-radius: 2.5rem;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 4px solid #fce7f3;
+            text-align: center;
+            position: relative;
+            z-index: 0;
+        }
+
+        .question-label {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-char {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 2rem;
+            min-height: 6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-container {
+            margin-top: 1rem;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .input-container.shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .answer-input {
+            width: 100%;
+            height: 4rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 1rem;
+            border: 2px solid;
+            padding: 0 3rem 0 1rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .answer-input:focus {
+            outline: none;
+        }
+
+        .answer-input.none {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .answer-input.none:focus {
+            border-color: #ec4899;
+        }
+
+        .answer-input.correct {
+            border-color: #4ade80;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .answer-input.incorrect {
+            border-color: #f87171;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .feedback-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+        }
+
+        .feedback-icon.correct {
+            color: #22c55e;
+            animation: bounce 0.5s;
+        }
+
+        .feedback-icon.incorrect {
+            color: #ef4444;
+            animation: pulse 1s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(-50%) scale(1);
+            }
+
+            50% {
+                transform: translateY(-50%) scale(1.2);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .correction-box {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #fee2e2;
+            border-radius: 0.75rem;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .correction-label {
+            font-size: 0.75rem;
+            color: #dc2626;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .correction-answer {
+            font-size: 1.125rem;
+            color: #991b1b;
+            font-weight: bold;
+            margin-top: 0.25rem;
+        }
+
+        .action-button {
+            margin-top: 2rem;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .action-button:active {
+            transform: scale(0.95);
+        }
+
+        .action-button.confirm {
+            background: #ec4899;
+        }
+
+        .action-button.confirm:hover {
+            background: #db2777;
+        }
+
+        .action-button.next {
+            background: #475569;
+        }
+
+        .action-button.next:hover {
+            background: #334155;
+        }
+
+        .action-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Cheat Sheet Toggle */
+        .cheat-sheet-toggle {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ec4899;
+            font-weight: bold;
+            font-size: 0.875rem;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .cheat-sheet-toggle:hover {
+            background: white;
+        }
+
+        .cheat-sheet-toggle svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Cheat Sheet */
+        .cheat-sheet {
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 28rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid white;
+            overflow-y: auto;
+            max-height: 15rem;
+            animation: slideInBottom 0.3s;
+        }
+
+        @keyframes slideInBottom {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cheat-sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+        }
+
+        .cheat-sheet-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.25rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .cheat-sheet-roman {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .cheat-sheet-char {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #1e293b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <button class="back-btn" onclick="window.history.back()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="header-title">
+                <h1>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <path d="M6 8h4M6 12h8M6 16h12"></path>
+                    </svg>
+                    50音タイピング
+                </h1>
+            </div>
+
+            <div class="combo-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <span>Combo: <span id="combo">0</span></span>
+            </div>
+        </header>
+
+        <!-- Mode Tabs -->
+        <div class="tabs-container">
+            <button class="tab active" data-mode="hiragana" onclick="setGameMode('hiragana')">平仮名 (Hiragana)</button>
+            <button class="tab" data-mode="katakana" onclick="setGameMode('katakana')">片仮名 (Katakana)</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Question Card -->
+            <div class="question-card">
+                <span class="question-label">ローマ字を入力してください</span>
+
+                <div class="question-char" id="questionChar">?</div>
+
+                <!-- Input Area -->
+                <div class="input-container" id="inputContainer">
+                    <input type="text" id="answerInput" class="answer-input none" placeholder="Romaji..."
+                        autocomplete="off" autocapitalize="off" onkeydown="handleKeyDown(event)" />
+                    <div class="feedback-icon" id="feedbackIcon" style="display: none;"></div>
+                </div>
+
+                <!-- Correction Display -->
+                <div class="correction-box" id="correctionBox" style="display: none;">
+                    <p class="correction-label">正解 (Answer)</p>
+                    <p class="correction-answer" id="correctAnswer"></p>
+                </div>
+
+                <!-- Action Button -->
+                <button class="action-button confirm" id="actionButton" onclick="handleAction()">
+                    確認する
+                </button>
+            </div>
+
+            <!-- Cheat Sheet Toggle -->
+            <button class="cheat-sheet-toggle" onclick="toggleCheatSheet()">
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span id="cheatSheetToggleText">早見表を表示</span>
+            </button>
+
+            <!-- Cheat Sheet -->
+            <div class="cheat-sheet" id="cheatSheet" style="display: none;">
+                <div class="cheat-sheet-grid" id="cheatSheetGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const hiragana = [
+            { char: 'あ', roman: 'a' }, { char: 'い', roman: 'i' }, { char: 'う', roman: 'u' }, { char: 'え', roman: 'e' }, { char: 'お', roman: 'o' },
+            { char: 'か', roman: 'ka' }, { char: 'き', roman: 'ki' }, { char: 'く', roman: 'ku' }, { char: 'け', roman: 'ke' }, { char: 'こ', roman: 'ko' },
+            { char: 'さ', roman: 'sa' }, { char: 'し', roman: 'shi' }, { char: 'す', roman: 'su' }, { char: 'せ', roman: 'se' }, { char: 'そ', roman: 'so' },
+            { char: 'た', roman: 'ta' }, { char: 'ち', roman: 'chi' }, { char: 'つ', roman: 'tsu' }, { char: 'て', roman: 'te' }, { char: 'と', roman: 'to' },
+            { char: 'な', roman: 'na' }, { char: 'に', roman: 'ni' }, { char: 'ぬ', roman: 'nu' }, { char: 'ね', roman: 'ne' }, { char: 'の', roman: 'no' },
+            { char: 'は', roman: 'ha' }, { char: 'ひ', roman: 'hi' }, { char: 'ふ', roman: 'fu' }, { char: 'へ', roman: 'he' }, { char: 'ほ', roman: 'ho' },
+            { char: 'ま', roman: 'ma' }, { char: 'み', roman: 'mi' }, { char: 'む', roman: 'mu' }, { char: 'め', roman: 'me' }, { char: 'も', roman: 'mo' },
+            { char: 'や', roman: 'ya' }, { char: 'ゆ', roman: 'yu' }, { char: 'よ', roman: 'yo' },
+            { char: 'ら', roman: 'ra' }, { char: 'り', roman: 'ri' }, { char: 'る', roman: 'ru' }, { char: 'れ', roman: 're' }, { char: 'ろ', roman: 'ro' },
+            { char: 'わ', roman: 'wa' }, { char: 'を', roman: 'wo' }, { char: 'ん', roman: 'n' }
+        ];
+
+        const katakana = [
+            { char: 'ア', roman: 'a' }, { char: 'イ', roman: 'i' }, { char: 'ウ', roman: 'u' }, { char: 'エ', roman: 'e' }, { char: 'オ', roman: 'o' },
+            { char: 'カ', roman: 'ka' }, { char: 'キ', roman: 'ki' }, { char: 'ク', roman: 'ku' }, { char: 'ケ', roman: 'ke' }, { char: 'コ', roman: 'ko' },
+            { char: 'サ', roman: 'sa' }, { char: 'シ', roman: 'shi' }, { char: 'ス', roman: 'su' }, { char: 'セ', roman: 'se' }, { char: 'ソ', roman: 'so' },
+            { char: 'タ', roman: 'ta' }, { char: 'チ', roman: 'chi' }, { char: 'ツ', roman: 'tsu' }, { char: 'テ', roman: 'te' }, { char: 'ト', roman: 'to' },
+            { char: 'ナ', roman: 'na' }, { char: 'ニ', roman: 'ni' }, { char: 'ヌ', roman: 'nu' }, { char: 'ネ', roman: 'ne' }, { char: 'ノ', roman: 'no' },
+            { char: 'ハ', roman: 'ha' }, { char: 'ヒ', roman: 'hi' }, { char: 'フ', roman: 'fu' }, { char: 'ヘ', roman: 'he' }, { char: 'ホ', roman: 'ho' },
+            { char: 'マ', roman: 'ma' }, { char: 'ミ', roman: 'mi' }, { char: 'ム', roman: 'mu' }, { char: 'メ', roman: 'me' }, { char: 'モ', roman: 'mo' },
+            { char: 'ヤ', roman: 'ya' }, { char: 'ユ', roman: 'yu' }, { char: 'ヨ', roman: 'yo' },
+            { char: 'ラ', roman: 'ra' }, { char: 'リ', roman: 'ri' }, { char: 'ル', roman: 'ru' }, { char: 'レ', roman: 're' }, { char: 'ロ', roman: 'ro' },
+            { char: 'ワ', roman: 'wa' }, { char: 'ヲ', roman: 'wo' }, { char: 'ン', roman: 'n' }
+        ];
+
+        let gameMode = 'hiragana';
+        let currentChar = null;
+        let feedback = 'none'; // 'none', 'correct', 'incorrect'
+        let combo = 0;
+        let showChart = false;
+
+        window.onload = function () {
+            nextQuestion();
+            updateCheatSheet();
+        };
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            nextQuestion();
+            updateCheatSheet();
+        }
+
+        function nextQuestion() {
+            const list = gameMode === 'hiragana' ? hiragana : katakana;
+            const randomChar = list[Math.floor(Math.random() * list.length)];
+            currentChar = randomChar;
+            feedback = 'none';
+
+            updateUI();
+            document.getElementById('answerInput').value = '';
+            setTimeout(() => document.getElementById('answerInput').focus(), 100);
+        }
+
+        function updateUI() {
+            if (!currentChar) return;
+
+            // Update question char
+            document.getElementById('questionChar').textContent = currentChar.char;
+
+            // Update input state
+            const input = document.getElementById('answerInput');
+            input.className = 'answer-input ' + feedback;
+
+            // Update feedback icon
+            const icon = document.getElementById('feedbackIcon');
+            if (feedback === 'correct') {
+                icon.style.display = 'block';
+                icon.className = 'feedback-icon correct';
+                icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            } else if (feedback === 'incorrect') {
+                icon.style.display = 'block';
+                icon.className = 'feedback-icon incorrect';
+                icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+            } else {
+                icon.style.display = 'none';
+            }
+
+            // Update correction box
+            const correctionBox = document.getElementById('correctionBox');
+            if (feedback === 'incorrect') {
+                correctionBox.style.display = 'block';
+                document.getElementById('correctAnswer').textContent = currentChar.roman;
+            } else {
+                correctionBox.style.display = 'none';
+            }
+
+            // Update action button
+            const actionButton = document.getElementById('actionButton');
+            if (feedback === 'incorrect') {
+                actionButton.className = 'action-button next';
+                actionButton.innerHTML = '次へ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+            } else {
+                actionButton.className = 'action-button confirm';
+                actionButton.textContent = '確認する';
+            }
+        }
+
+        function checkAnswer() {
+            if (!currentChar || feedback === 'incorrect') return;
+
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            const expectedAnswer = currentChar.roman.toLowerCase();
+
+            if (userAnswer === expectedAnswer) {
+                feedback = 'correct';
+                combo++;
+                document.getElementById('combo').textContent = combo;
+                updateUI();
+                setTimeout(nextQuestion, 1000);
+            } else {
+                feedback = 'incorrect';
+                combo = 0;
+                document.getElementById('combo').textContent = combo;
+                document.getElementById('inputContainer').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('inputContainer').classList.remove('shake');
+                }, 500);
+                updateUI();
+            }
+        }
+
+        function handleAction() {
+            if (feedback === 'incorrect') {
+                nextQuestion();
+            } else {
+                checkAnswer();
+            }
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                if (feedback === 'incorrect') {
+                    nextQuestion();
+                } else if (feedback === 'none') {
+                    checkAnswer();
+                }
+            }
+        }
+
+        function toggleCheatSheet() {
+            showChart = !showChart;
+            const cheatSheet = document.getElementById('cheatSheet');
+            const toggleText = document.getElementById('cheatSheetToggleText');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (showChart) {
+                cheatSheet.style.display = 'block';
+                toggleText.textContent = '早見表を隠す';
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                cheatSheet.style.display = 'none';
+                toggleText.textContent = '早見表を表示';
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+
+        function updateCheatSheet() {
+            const list = gameMode === 'hiragana' ? hiragana : katakana;
+            const grid = document.getElementById('cheatSheetGrid');
+            grid.innerHTML = '';
+
+            list.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'cheat-sheet-item';
+                div.innerHTML = `
+            <span class="cheat-sheet-roman">${item.roman}</span>
+            <span class="cheat-sheet-char">${item.char}</span>
+        `;
+                grid.appendChild(div);
+            });
+        }
+    </script>
+</body>
+
+</html>
