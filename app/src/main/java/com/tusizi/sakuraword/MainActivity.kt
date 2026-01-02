@@ -27,11 +27,9 @@ import com.tusizi.sakuraword.ui.theme.SakuraWordTheme
  * https://dribbble.com/shots/26392061-Sakura   bg
  * https://gemini.google.com/share/27d89fd9d7c6  聊天记录
  * 日本语能力测试（JLPT）
- * https://github.com/dominhhai/jlpt-test 日本語能力試験 JLPT問題集
- * https://github.com/AnchorI/jlpt-kanji-dictionary  按 JLPT 级别组织的结构化日语汉字和词汇 JSON 数据集
- * https://github.com/mmm3w/JLPT-Mitsuki/blob/master/update/words。单词
+ * https://github.com/dominhhai/jlpt-test 日本語能力試験 JLPT問題集（已处理）
+ * https://github.com/mmm3w/JLPT-Mitsuki/blob/master/update/words 单词(ok)
  * https://github.com/nguyenduylong/JLPT_questions。可参考
- * https://github.com/Myrtenast3r/Kanji-Practice-App。 练习日语能力考试N1级汉字题
  */
 class MainActivity : ComponentActivity() {
 
