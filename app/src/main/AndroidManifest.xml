@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -40,6 +42,18 @@
         <activity
             android:name=".JapanWordActivity"
             android:theme="@style/Theme.NoEdgeToEdge"/>
+
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false"
+            android:label="词典搜索"
+            android:theme="@style/Theme.SakuraWord" />
+
+        <activity
+            android:name=".ui.article.ArticleActivity"
+            android:exported="false"
+            android:label="最新内容"
+            android:theme="@style/Theme.SakuraWord" />
 
     </application>
 

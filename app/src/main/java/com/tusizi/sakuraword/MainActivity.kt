@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tusizi.sakuraword.data.Words
+import com.tusizi.sakuraword.ui.article.ArticleActivity
+import com.tusizi.sakuraword.ui.search.SearchActivity
 import com.tusizi.sakuraword.ui.theme.SakuraWordTheme
 
 /**
@@ -84,7 +86,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding)
                             .padding(16.dp)
                     ) {
-                        // 主标题
+                        // 主标题第一课
                         Text(
                             text = "选择学习内容",
                             fontSize = 24.sp,
@@ -126,6 +128,30 @@ class MainActivity : ComponentActivity() {
                         // 底部其他功能按钮
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
                         
+                        Button(
+                            onClick = {
+                                startActivity(Intent(this@MainActivity, SearchActivity::class.java))
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                        ) {
+                            Text("词典单词搜索")
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = {
+                                startActivity(Intent(this@MainActivity, ArticleActivity::class.java))
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+                        ) {
+                            Text("最新内容 (文章/视频)")
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
                         Button(
                             onClick = {
                                 startActivity(Intent(this@MainActivity, JLPTActivity::class.java))
