@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tusizi.sakuraword.data.Words
 import com.tusizi.sakuraword.ui.article.ArticleActivity
+import com.tusizi.sakuraword.ui.quiz.QuizActivity
 import com.tusizi.sakuraword.ui.search.SearchActivity
 import com.tusizi.sakuraword.ui.theme.SakuraWordTheme
 
@@ -31,15 +32,16 @@ import com.tusizi.sakuraword.ui.theme.SakuraWordTheme
  * 日本语能力测试（JLPT）
  * https://github.com/dominhhai/jlpt-test 日本語能力試験 JLPT問題集（已处理）
  * https://github.com/mmm3w/JLPT-Mitsuki/blob/master/update/words 单词(ok)
- * https://github.com/nguyenduylong/JLPT_questions。可参考
+ * https://github.com/nguyenduylong/JLPT_questions。可参考（已处理）
  */
 class MainActivity : ComponentActivity() {
 
     data class LearningOption(
         val title: String,
         val description: String,
-        val htmlFile: String,
-        val icon: String
+        val fileName: String,
+        val icon: String,
+        val isQuiz: Boolean = false
     )
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -48,12 +50,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         val learningOptions = listOf(
-            LearningOption("N5 动词测验", "JLPT N5 级别动词练习", "n5.html", "📝"),
-            LearningOption("N4 动词测验", "JLPT N4 级别动词练习", "n4.html", "📖"),
+            LearningOption("N1 语法练习", "N1 级语法专项练习 462题", "mondai1kyu1_462.csv", "📝", true),
+            LearningOption("N1 模拟测验", "N1 级综合模拟测验 1400题", "mondai1kyu1_1400.csv", "🎓", true),
+            LearningOption("N5 动词测验", "JLPT N5 级别动词练习", "n5.html", "📖"),
+            LearningOption("N4 动词测验", "JLPT N4 级别动词练习", "n4.html", "📚"),
             LearningOption("50音打字", "日文50音打字练习", "50.html", "⌨️"),
-            LearningOption("生活日文", "日常生活单词学习", "seikatsu.html", "🏠"),
-            LearningOption("单词配对", "单词配对游戏","",""),
-            LearningOption("落樱辨音", "听语音识别出单词游戏","","")
+            LearningOption("生活日文", "日常生活单词学习", "seikatsu.html", "🏠")
         )
 
         val sampleWords = listOf(
@@ -114,12 +116,20 @@ class MainActivity : ComponentActivity() {
 //                                    )
 //                                } else{
                                 LearningOptionCard(option) {
-                                    // 点击后跳转到 WebView 页面
-                                    val intent = Intent(this@MainActivity, JapanWordActivity::class.java).apply {
-                                        putExtra(JapanWordActivity.EXTRA_HTML_FILE, option.htmlFile)
-                                        putExtra(JapanWordActivity.EXTRA_TITLE, option.title)
+                                    if (option.isQuiz) {
+                                        val intent = Intent(this@MainActivity, QuizActivity::class.java).apply {
+                                            putExtra(QuizActivity.EXTRA_FILE_NAME, option.fileName)
+                                            putExtra(QuizActivity.EXTRA_TITLE, option.title)
+                                        }
+                                        startActivity(intent)
+                                    } else {
+                                        // 点击后跳转到 WebView 页面
+                                        val intent = Intent(this@MainActivity, JapanWordActivity::class.java).apply {
+                                            putExtra(JapanWordActivity.EXTRA_HTML_FILE, option.fileName)
+                                            putExtra(JapanWordActivity.EXTRA_TITLE, option.title)
+                                        }
+                                        startActivity(intent)
                                     }
-                                    startActivity(intent)
                                 }
 //                                }
                             }
@@ -226,7 +236,8 @@ fun MainActivityPreview() {
                         "N5 动词测验",
                         "JLPT N5 级别动词练习",
                         "n5.html",
-                        "📝"
+                        "📝",
+                        false
                     )
                 ) {}
             }

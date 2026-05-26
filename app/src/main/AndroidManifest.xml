@@ -55,6 +55,12 @@
             android:label="最新内容"
             android:theme="@style/Theme.SakuraWord" />
 
+        <activity
+            android:name=".ui.quiz.QuizActivity"
+            android:exported="false"
+            android:label="JLPT 测验"
+            android:theme="@style/Theme.SakuraWord" />
+
     </application>
 
 </manifest>
