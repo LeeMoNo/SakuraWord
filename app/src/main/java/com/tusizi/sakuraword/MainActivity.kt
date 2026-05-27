@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tusizi.sakuraword.data.Words
 import com.tusizi.sakuraword.ui.article.ArticleActivity
+import com.tusizi.sakuraword.ui.quiz.LifeWordActivity
 import com.tusizi.sakuraword.ui.quiz.QuizActivity
+import com.tusizi.sakuraword.ui.quiz.VerbQuizActivity
 import com.tusizi.sakuraword.ui.search.SearchActivity
 import com.tusizi.sakuraword.ui.theme.SakuraWordTheme
 
@@ -41,7 +43,9 @@ class MainActivity : ComponentActivity() {
         val description: String,
         val fileName: String,
         val icon: String,
-        val isQuiz: Boolean = false
+        val isQuiz: Boolean = false,
+        val isVerbQuiz: Boolean = false,
+        val isLifeQuiz: Boolean = false
     )
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -52,10 +56,9 @@ class MainActivity : ComponentActivity() {
         val learningOptions = listOf(
             LearningOption("N1 语法练习", "N1 级语法专项练习 462题", "mondai1kyu1_462.csv", "📝", true),
             LearningOption("N1 模拟测验", "N1 级综合模拟测验 1400题", "mondai1kyu1_1400.csv", "🎓", true),
-            LearningOption("N5 动词测验", "JLPT N5 级别动词练习", "n5.html", "📖"),
-            LearningOption("N4 动词测验", "JLPT N4 级别动词练习", "n4.html", "📚"),
-            LearningOption("50音打字", "日文50音打字练习", "50.html", "⌨️"),
-            LearningOption("生活日文", "日常生活单词学习", "seikatsu.html", "🏠")
+            LearningOption("N5 动词测验", "JLPT N5 级别动词练习", "n5.csv", "📖", true, true),
+            LearningOption("N4 动词测验", "JLPT N4 级别動詞練習", "n4.csv", "📚", true, true),
+            LearningOption("生活日文", "日常生活单词学习", "seikatsu.csv", "🏠", isLifeQuiz = true)
         )
 
         val sampleWords = listOf(
@@ -116,7 +119,19 @@ class MainActivity : ComponentActivity() {
 //                                    )
 //                                } else{
                                 LearningOptionCard(option) {
-                                    if (option.isQuiz) {
+                                    if (option.isLifeQuiz) {
+                                        val intent = Intent(this@MainActivity, LifeWordActivity::class.java).apply {
+                                            putExtra(LifeWordActivity.EXTRA_FILE_NAME, option.fileName)
+                                            putExtra(LifeWordActivity.EXTRA_TITLE, option.title)
+                                        }
+                                        startActivity(intent)
+                                    } else if (option.isVerbQuiz) {
+                                        val intent = Intent(this@MainActivity, VerbQuizActivity::class.java).apply {
+                                            putExtra(VerbQuizActivity.EXTRA_FILE_NAME, option.fileName)
+                                            putExtra(VerbQuizActivity.EXTRA_TITLE, option.title)
+                                        }
+                                        startActivity(intent)
+                                    } else if (option.isQuiz) {
                                         val intent = Intent(this@MainActivity, QuizActivity::class.java).apply {
                                             putExtra(QuizActivity.EXTRA_FILE_NAME, option.fileName)
                                             putExtra(QuizActivity.EXTRA_TITLE, option.title)

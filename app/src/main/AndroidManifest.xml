@@ -61,6 +61,18 @@
             android:label="JLPT 测验"
             android:theme="@style/Theme.SakuraWord" />
 
+        <activity
+            android:name=".ui.quiz.VerbQuizActivity"
+            android:exported="false"
+            android:label="动词活用练习"
+            android:theme="@style/Theme.SakuraWord" />
+
+        <activity
+            android:name=".ui.quiz.LifeWordActivity"
+            android:exported="false"
+            android:label="生活单词练习"
+            android:theme="@style/Theme.SakuraWord" />
+
     </application>
 
 </manifest>
