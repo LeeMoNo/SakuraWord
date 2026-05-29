@@ -5,17 +5,6 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-// React Native 配置（如果已安装 npm 包）
-// 注意：需要先运行 npm install 安装 React Native 后才能启用
-val reactNativeDir = file("${rootDir}/../node_modules/react-native")
-if (reactNativeDir.exists()) {
-    // 应用 React Native 的自动链接脚本
-    val autolinkingFile = file("${reactNativeDir}/scripts/autolinking.gradle.kts")
-    if (autolinkingFile.exists()) {
-        apply(from = autolinkingFile)
-    }
-}
-
 android {
     namespace = "com.tusizi.sakuraword"
     compileSdk = 36
@@ -29,7 +18,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
-        // 确保 ndk 架构过滤，RN 必须指定
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
         }
@@ -55,7 +43,6 @@ android {
         compose = true
     }
     
-    // 开启原生向量指令支持
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -97,14 +84,4 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    
-    // React Native 依赖（需要先安装 npm 包：npm install react-native）
-    // 这些依赖从 node_modules/react-native/android Maven 仓库获取
-    val reactNativeDir = file("${rootDir}/../node_modules/react-native")
-    if (reactNativeDir.exists()) {
-        implementation("com.facebook.react:react-android")
-        // 引入 Hermes 引擎
-        implementation("com.facebook.react:hermes-android")
-    }
-
 }
